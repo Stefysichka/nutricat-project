@@ -1,0 +1,11 @@
+# --- Python & Django (Бекенд) ---
+venv/
+__pycache__/
+*.pyc
+db.sqlite3
+.DS_Store
+
+# --- IDE (Налаштування редакторів коду) ---
+.vscode/
+.idea/
+*.swp
