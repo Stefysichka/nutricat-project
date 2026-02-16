@@ -1,0 +1,97 @@
+@import '../../../../styles/variables';
+
+.navbar {
+    background-color: $black-bg;
+    border-bottom: 1px solid lighten($black-bg, 10%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: $white;
+    font-size: $fs-body;
+    text-decoration: none;
+    font-family: $font-main;
+
+    img {
+        width: 54px;
+    }
+
+    &.clickable {
+        cursor: pointer;
+        transition: opacity 0.3s;
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+
+    .user-name,
+    .brand-name {
+        font-weight: bold;
+    }
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px;
+
+    a {
+        color: $white;
+        text-decoration: none;
+        font-size: $fs-body;
+        padding: 8px 16px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: rgba($grey-dark, 0.2);
+        }
+    }
+}
+
+.login-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: $white;
+    text-decoration: none;
+    font-size: $fs-body;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.3 ease;
+
+    img {
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    &:hover {
+        background-color: rgba($grey-dark, 0.3);
+    }
+}
+
+.logout-btn {
+    background: none;
+    border-radius: 6px;
+    transition: background-color 0.3 ease;
+    cursor: pointer;
+    border: none;
+    padding: 8px 12px;
+
+    &:hover {
+        background-color: rgba($grey-dark, 0.2);
+    }
+}

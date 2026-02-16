@@ -1,0 +1,53 @@
+<section class="hero-section">
+  <div class="content-block">
+    <h1 class="hero-title">
+      Твій кіт заслоговує на <br />
+      <span class="highlight">ідеальний раціон</span>
+    </h1>
+    <p class="hero-subtitle">
+      Розрахуй добову норму калорій, баланс білків та жирів на основі
+      ветеринарних формул. Допоможи улюбленцю тримати тіло в тонусі та
+      залишатися здоровим.
+    </p>
+
+    <div class="cta-wrapper">
+      <app-custom-button
+        label="Створити раціон"
+        variant="primary"
+        (onClick)="createRation()"
+      >
+      </app-custom-button>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon">⚖️</div>
+        <h3>Контроль ваги</h3>
+        <p>
+          Запобігай ожирінню та підтримуй ідеальну форму улюбленця. Наш алгоритм
+          розраховує точну денну норму калорій, враховуючи вік, точну вагу та
+          рівень активності твого кота.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon">🥩</div>
+        <h3>Аналіз БЖВ</h3>
+        <p>
+          Контролюй співвідношення білків, жирів та вуглеводів у кожній порції.
+          Збалансоване харчування — це запорука блискучої шерсті, міцного
+          імунітету та здорового травлення.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="image-block" 
+     (mouseenter)="playAnimation()" 
+     (mouseleave)="stopAnimation()">
+  <ng-lottie 
+    [options]="options" 
+    (animationCreated)="animationCreated($event)"
+    class="animated-cat">
+  </ng-lottie>
+</div>
+</section>
