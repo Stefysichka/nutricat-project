@@ -1,62 +1,67 @@
 @import '../../../../styles/variables';
 
 .navbar {
-    background-color: $black-bg;
-    border-bottom: 1px solid lighten($black-bg, 10%);
+    background-color: #ffffff; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 12px 30px;
+    position: sticky; 
+    top: 0;
+    z-index: 100;
 }
 
 .logo-wrapper {
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: $white;
-    font-size: $fs-body;
+    gap: 12px;
     text-decoration: none;
     font-family: $font-main;
-
     img {
-        width: 54px;
+        width: 50px;
     }
 
     &.clickable {
         cursor: pointer;
-        transition: opacity 0.3s;
+        transition: transform 0.3s ease;
 
         &:hover {
-            opacity: 0.8;
+            transform: scale(1.05); 
         }
     }
 
     .user-name,
     .brand-name {
-        font-weight: bold;
+        font-weight: 800;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 }
 
 .right-section {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .nav-links {
     display: flex;
     gap: 10px;
-
     a {
-        color: $white;
+        color: #555; 
+        font-weight: 600;
         text-decoration: none;
         font-size: $fs-body;
         padding: 8px 16px;
-        border-radius: 6px;
-        transition: background-color 0.3s ease;
+        border-radius: 12px;
+        transition: all 0.3s ease;
 
         &:hover {
-            background-color: rgba($grey-dark, 0.2);
+            color: #222;
+            background-color: rgba(255, 154, 158, 0.15); 
         }
     }
 }
@@ -65,33 +70,41 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    color: $white;
+    color: #555;
+    font-weight: 600;
     text-decoration: none;
     font-size: $fs-body;
     padding: 8px 16px;
-    border-radius: 8px;
-    transition: background-color 0.3 ease;
-
-    img {
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
+    border-radius: 12px;
+    transition: all 0.3s ease;
 
     &:hover {
-        background-color: rgba($grey-dark, 0.3);
+        color: #222;
+        background-color: rgba(255, 154, 158, 0.15);
     }
 }
 
 .logout-btn {
     background: none;
-    border-radius: 6px;
-    transition: background-color 0.3 ease;
+    border-radius: 12px;
+    transition: all 0.3s ease;
     cursor: pointer;
     border: none;
     padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
-        background-color: rgba($grey-dark, 0.2);
+        background-color: rgba(255, 154, 158, 0.15);
+    }
+
+    img, svg {
+        filter: invert(0.6) sepia(1) hue-rotate(315deg) saturate(0.5); 
+        transition: filter 0.3s;
+    }
+
+    &:hover img, &:hover svg {
+        filter: invert(0.2); 
     }
 }

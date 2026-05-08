@@ -1,24 +1,42 @@
 @import '../../../../styles/variables';
 
-.nutri-btn{
-    color: $white;
-    font-size: $fs-body;
+.nutri-btn {
+    font-size: 1rem;
+    font-weight: 700;
     border: none;
-    border-radius: 10px;
-    padding: 15px 25px;
+    border-radius: 12px;
+    padding: 14px 28px;
     cursor: pointer;
-    transition: opacity 0.3s; 
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
+    transition: all 0.3s ease;
+    background: transparent;
 
-    &:hover{
-        opacity: 0.9;
+    &:active {
+        transform: scale(0.96);
     }
 
-    &.primary{
-        background-color: $peach-main;
+    &.primary {
+        background-color: rgba($peach-main, 0.15);
+        color: darken($peach-main, 15%); 
+        box-shadow: none;
+
+        &:hover {
+            background-color: $peach-main;
+            color: $white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba($peach-main, 0.25);
+        }
     }
 
-    &.dark{
-        background-color: $red-deep;
+    &.dark {
+        background-color: rgba($red-deep, 0.1);
+        color: $red-deep;
+        box-shadow: none;
+
+        &:hover {
+            background-color: $red-deep;
+            color: $white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba($red-deep, 0.25);
+        }
     }
 }

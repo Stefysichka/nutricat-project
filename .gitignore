@@ -1,11 +1,27 @@
-# --- Python & Django (Бекенд) ---
+
 venv/
+env/
 __pycache__/
 *.pyc
 db.sqlite3
-.DS_Store
+*.log
 
-# --- IDE (Налаштування редакторів коду) ---
-.vscode/
-.idea/
-*.swp
+.env
+*.env
+local_settings.py
+
+media/
+staticfiles/
+static_root/
+
+.pytest_cache/
+htmlcov/
+.coverage
+
+node_modules/
+dist/
+.angular/
+npm-debug.log
+
+.DS_Store
+Thumbs.db

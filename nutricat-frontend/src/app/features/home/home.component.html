@@ -1,53 +1,137 @@
-<section class="hero-section">
-  <div class="content-block">
-    <h1 class="hero-title">
-      Твій кіт заслоговує на <br />
-      <span class="highlight">ідеальний раціон</span>
-    </h1>
-    <p class="hero-subtitle">
-      Розрахуй добову норму калорій, баланс білків та жирів на основі
-      ветеринарних формул. Допоможи улюбленцю тримати тіло в тонусі та
-      залишатися здоровим.
-    </p>
+<div class="landing-page">
+  <section class="hero-section">
+    <div class="bg-blob"></div>
 
-    <div class="cta-wrapper">
-      <app-custom-button
-        label="Створити раціон"
-        variant="primary"
-        (onClick)="createRation()"
-      >
-      </app-custom-button>
+    <div class="hero-content">
+      <div class="hero-badge">Smart-догляд за улюбленцем</div>
+
+      <h1 class="hero-title">
+        Довге життя починається з <br />
+        <span class="highlight">правильної миски</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Забудьте про складні підрахунки. Розкажіть нашому ШІ-дієтологу про свого
+        улюбленця, а NutriCat проаналізує його стан, побудує графіки
+        макронутриєнтів та складе ідеальне меню.
+      </p>
+
+      <div class="cta-actions">
+        <a href="#about-project" class="nutri-btn primary">Про проєкт</a>
+        <a href="#how-it-works" class="nutri-btn outline">Як це працює</a>
+      </div>
     </div>
 
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="icon">⚖️</div>
-        <h3>Контроль ваги</h3>
+    <div class="hero-visual">
+      <div class="mockup-card card-main shadow-box">
+        <div class="mockup-header">
+          <div class="mockup-avatar">😺</div>
+          <div class="mockup-info">
+            <h4>Пушок</h4>
+            <span>Вага: 15.00 кг • Потребує дієти</span>
+          </div>
+        </div>
+        <div class="mockup-chart">
+          <div class="bar pink" style="width: 80%"></div>
+          <div class="bar brown" style="width: 40%"></div>
+          <div class="bar dark" style="width: 15%"></div>
+        </div>
+      </div>
+
+      <div class="mockup-card card-alert shadow-box">
+        <span class="icon">🚨</span>
+        <div class="alert-text">
+          <strong>Тривожні симптоми</strong>
+          <span>Млявість, втрата апетиту</span>
+        </div>
+      </div>
+
+      <div class="mockup-card card-success shadow-box">
+        <span class="icon">✨</span>
+        <div class="success-text">
+          <strong>Раціон згенеровано</strong>
+          <span>Acana Pacifica (60г/день)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bento-section">
+    <div class="bento-grid">
+      <div class="bento-card large-card shadow-box">
+        <div class="icon">💬</div>
+        <h3>Живе спілкування з ШІ</h3>
         <p>
-          Запобігай ожирінню та підтримуй ідеальну форму улюбленця. Наш алгоритм
-          розраховує точну денну норму калорій, враховуючи вік, точну вагу та
-          рівень активності твого кота.
+          Забудьте про нудні анкети! Алгоритм збирає всі дані, аналізує скарги
+          та з'ясовує індивідуальні потреби улюбленця через звичайний діалог.
         </p>
       </div>
 
-      <div class="feature-card">
-        <div class="icon">🥩</div>
-        <h3>Аналіз БЖВ</h3>
+      <div class="bento-card shadow-box">
+        <div class="icon">📊</div>
+        <h3>Точна аналітика</h3>
         <p>
-          Контролюй співвідношення білків, жирів та вуглеводів у кожній порції.
-          Збалансоване харчування — це запорука блискучої шерсті, міцного
-          імунітету та здорового травлення.
+          Наочні графіки білків, жирів та клітковини для повного контролю за
+          кожною порцією.
+        </p>
+      </div>
+
+      <div class="bento-card shadow-box">
+        <div class="icon">🏥</div>
+        <h3>Вет-контроль</h3>
+        <p>
+          Система миттєво реагує на критичні симптоми та шукає клініки поруч.
         </p>
       </div>
     </div>
-  </div>
-  <div class="image-block" 
-     (mouseenter)="playAnimation()" 
-     (mouseleave)="stopAnimation()">
-  <ng-lottie 
-    [options]="options" 
-    (animationCreated)="animationCreated($event)"
-    class="animated-cat">
-  </ng-lottie>
+  </section>
+
+  <section id="about-project" class="about-section">
+    <div class="about-container shadow-box">
+      <div class="badge">Кваліфікаційна робота</div>
+      <h2>Про застосунок NutriCat</h2>
+      <div class="about-text">
+        <p>
+          Головна місія NutriCat — зробити професійний підхід до харчування улюбленців простим і зручним. Завдяки штучному інтелекту складні ветеринарні знання перетворюються на зрозумілий інструмент для турботливих господарів.
+        <p>
+          Під капотом платформи працюють алгоритми OpenAI, які не просто
+          агрегують дані, а й здатні самостійно виявляти ризики для здоров'я,
+          генерувати персоналізовані харчові рекомендації та запобігати розвитку
+          захворювань на основі ветеринарних норм.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="steps-section">
+    <div class="section-header">
+      <h2>Ваш ветеринарний асистент</h2>
+      <p>Три прості кроки до ідеального раціону</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card shadow-box">
+        <div class="step-number">1</div>
+        <h3>Базові дані</h3>
+        <p>
+          Додайте вік, вагу та поточний корм. Усе інше ШІ з'ясує у форматі чату.
+        </p>
+      </div>
+      <div class="step-card shadow-box">
+        <div class="step-number">2</div>
+        <h3>Аналіз балансу</h3>
+        <p>
+          Система вирахує макронутриєнти та візуалізує їх у стильних графіках.
+        </p>
+      </div>
+      <div class="step-card shadow-box">
+        <div class="step-number">3</div>
+        <h3>Генерація меню</h3>
+        <p>
+          Натисніть одну кнопку, і ШІ складе персональне меню з точною
+          грамівкою.
+        </p>
+      </div>
+    </div>
+  </section>
 </div>
-</section>

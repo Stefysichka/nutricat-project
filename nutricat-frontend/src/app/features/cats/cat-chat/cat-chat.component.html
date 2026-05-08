@@ -1,0 +1,54 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <h2>Створення профілю котика</h2>
+    <p>Дайте відповідь на кілька запитань ШІ</p>
+  </div>
+
+  <div class="chat-messages">
+    @for (msg of messages; track $index) {
+      <div class="message" [ngClass]="msg.role">
+        <div class="bubble">
+          {{ msg.content }}
+        </div>
+      </div>
+    }
+    
+    @if (isLoading) {
+      <div class="message assistant">
+        <div class="bubble typing">ШІ друкує...</div>
+      </div>
+    }
+  </div>
+
+ <div class="chat-input-area">
+    @if (!isFinished) {
+      <input 
+        type="text" 
+        [(ngModel)]="userInput" 
+        (keyup.enter)="sendMessage()"
+        placeholder="Напишіть відповідь..."
+        [disabled]="isLoading"
+      >
+      <div style="display: flex; gap: 10px;">
+        <app-custom-button 
+          label="Відправити" 
+          (onClick)="sendMessage()">
+        </app-custom-button>
+        
+        @if (isEditMode) {
+          <app-custom-button 
+            label="Зберегти" 
+            (onClick)="forceSave()"
+            style="background-color: #4CAF50;"> </app-custom-button>
+        }
+      </div>
+    } @else {
+      <div style="width: 100%; display: flex; justify-content: center;">
+        <app-custom-button 
+          label="Повернутися до профілю" 
+          (onClick)="goToProfile()">
+        </app-custom-button>
+      </div>
+    }
+  </div>
+</div>

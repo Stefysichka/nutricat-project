@@ -1,0 +1,44 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2>{{ isLoginMode ? 'Вхід у NutriCat' : 'Створення акаунту' }}</h2>
+    
+    @if (errorMessage) {
+      <div class="error-msg">{{ errorMessage }}</div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      
+      @if (!isLoginMode) {
+        <div class="input-group">
+          <label>Ім'я</label>
+          <input type="text" name="username" [(ngModel)]="formData.username" placeholder="Наприклад, Стефанія">
+        </div>
+      }
+
+      <div class="input-group">
+        <label>Електронна пошта</label>
+        <input type="email" name="email" [(ngModel)]="formData.email" required placeholder="mail@example.com">
+      </div>
+
+      <div class="input-group">
+        <label>Пароль</label>
+        <input type="password" name="password" [(ngModel)]="formData.password" required placeholder="Мінімум 8 символів">
+      </div>
+
+      <div class="btn-container">
+        <app-custom-button 
+          [label]="isLoginMode ? 'Увійти' : 'Зареєструватись'" 
+          type="submit"
+          variant="primary">
+        </app-custom-button>
+      </div>
+    </form>
+
+    <div class="switch-mode">
+      <span>{{ isLoginMode ? 'Ще не з нами?' : 'Вже маєте акаунт?' }}</span>
+      <button type="button" class="text-btn" (click)="toggleMode()">
+        {{ isLoginMode ? 'Створити профіль' : 'Увійти' }}
+      </button>
+    </div>
+  </div>
+</div>

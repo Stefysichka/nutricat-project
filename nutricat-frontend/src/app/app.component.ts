@@ -1,30 +1,40 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from './core/layout/navbar/navbar.component';
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterOutlet, Router } from '@angular/router';
+import { NavbarComponent } from './core/layout/navbar/navbar.component'; 
+import { AuthService } from './core/services/auth.service';
 import { NavLink } from './domain/models/nav-link.model';
 import { User } from './domain/models/user.module';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [RouterOutlet, NavbarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  currentUser: User | undefined = { id: 1, name: 'Stefaniia', email: 'test@test.com' };
+export class AppComponent implements OnInit {
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  userLinks: NavLink[] = [
-    { label: 'Головна', path: '/' },
-    { label: 'Мої коти', path: '/cats' }
-  ]
+  
+  currentUser: User | undefined = undefined; 
 
-  guestLinks: NavLink[] = [];
+  
+  navLinks: NavLink[] = [
+    { path: '/', label: 'Головна' },
+    { path: '/cats', label: 'Мої коти' }
+  ];
 
-  get currentLinks(): NavLink[]{
-    return this.currentUser ? this.userLinks : this.guestLinks;
+  ngOnInit() {
+    
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
   }
-  onLogout() {
-    console.log('Вихід з акаунту...');
-    this.currentUser = undefined; // Імітуємо вихід
+
+  
+  handleLogout() {
+    this.authService.logout();
+    this.router.navigate(['/']); 
   }
 }

@@ -1,5 +1,9 @@
-<app-navbar [user] = "currentUser" [links] = "currentLinks" (logout) = "onLogout()"></app-navbar>
+<app-navbar 
+  [user]="currentUser" 
+  [links]="navLinks" 
+  (logout)="handleLogout()">
+</app-navbar>
 
-<main class = "main-content">
+<main class="main-content">
   <router-outlet></router-outlet>
 </main>
