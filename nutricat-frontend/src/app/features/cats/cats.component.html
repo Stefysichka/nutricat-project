@@ -1,0 +1,47 @@
+<div class="dashboard-container">
+  @if (isLoading) {
+    <div class="loading-state">Завантаження даних...</div>
+  } @else {
+    
+    <div class="dash-header">
+      <h1>Мої коти</h1>
+      <span class="count-badge">Всього: {{ cats.length }}</span>
+    </div>
+
+    <div class="cats-grid">
+      
+      @for (cat of cats; track cat.id) {
+        <div class="cat-card shadow-box">
+          <div class="card-image">
+            <img [src]="cat.photo_url || 'https://cdn-icons-png.flaticon.com/512/1864/1864514.png'" alt="{{ cat.name }}">
+          </div>
+          
+          <div class="card-info">
+            <h3>{{ cat.name }}</h3>
+            
+            <div class="tags">
+              <span class="tag">{{ calculateAge(cat.birth_date) }}</span>
+              <span class="tag">{{ cat.weight_kg }} кг</span>
+            </div>
+          </div>
+
+          <a [routerLink]="['/cats', cat.id]" class="open-link">
+            Відкрити профіль 
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      }
+
+      <div class="cat-card add-new-card" routerLink="/chat-test">
+        <div class="plus-circle">+</div>
+        <h3>Зареєструвати кота</h3>
+        <p>ШІ підбере ідеальний раціон</p>
+      </div>
+
+    </div>
+  }
+
+  <div class="page-footer">
+    <span class="copyright">© 2026 NutriCat</span>
+  </div>
+</div>

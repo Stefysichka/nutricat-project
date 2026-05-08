@@ -1,0 +1,147 @@
+<div class="profile-wrapper">
+  @if (cat) {
+    <div class="profile-grid">
+      
+      <div class="left-col">
+        <div class="header-info shadow-box">
+          <div class="cat-info-row">
+            <div class="image-upload-wrapper" (click)="fileInput.click()" title="Натисніть, щоб змінити фото">
+              @if (cat.photo_url) {
+                <img [src]="cat.photo_url" alt="{{ cat.name }}" class="cat-avatar" />
+              } @else {
+                <div class="empty-avatar">
+                  <span class="plus-icon">+</span>
+                  <span class="upload-text">Завантажити фото</span>
+                </div>
+              }
+              <input #fileInput type="file" accept="image/*" (change)="onPhotoSelected($event)" style="display: none;">
+            </div>
+
+            <div class="info-text">
+              <h2>{{ cat.name }}</h2>
+              <p class="stat">Вік: <span>{{ calculateAge(cat.birth_date) }}</span></p>
+              <p class="stat">Вага: <span>{{ cat.weight_kg }} кг</span></p>
+              <p class="stat">Стерилізація: <span>{{ cat.is_neutered ? "присутня" : "відсутня" }}</span></p>
+
+              <div class="action-buttons">
+                <a [routerLink]="['/chat-test']" [queryParams]="{edit: cat.id, name: cat.name}" class="edit-link" title="Редагувати">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </a>
+                
+                <button (click)="deleteProfile()" class="delete-btn" title="Видалити профіль">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-container shadow-box">
+          <div class="css-chart">
+            <div class="bar-group">
+              <div class="bar bar-pink" [style.height.%]="getNormalizedHeight(cat.chart_data.protein)">
+                <div class="tooltip">Протеїн: {{ cat.chart_data.protein }}%</div>
+              </div>
+            </div>
+            <div class="bar-group">
+              <div class="bar bar-brown" [style.height.%]="getNormalizedHeight(cat.chart_data.fat)">
+                <div class="tooltip">Жири: {{ cat.chart_data.fat }}%</div>
+              </div>
+            </div>
+            <div class="bar-group">
+              <div class="bar bar-dark" [style.height.%]="getNormalizedHeight(cat.chart_data.fiber)">
+                <div class="tooltip">Клітковина: {{ cat.chart_data.fiber }}%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="advice-section">
+          <div class="section-header" style="display: flex; justify-content: space-between; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 0.8rem;">
+              <h3>Харчові поради</h3>
+              <span class="arrow-down">▼</span>
+            </div>
+            
+            @if (hasVetWarning()) {
+              <div class="vet-warning-badge" (click)="findNearbyVets()" title="Потрібен огляд лікаря! Натисніть, щоб знайти клініки.">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="alert-icon">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>Знайти ветклініку</span>
+              </div>
+            }
+          </div>
+
+          <div class="advice-box shadow-box">
+            <p>{{ displayTips }}</p>
+          </div>
+        </div>
+
+        <div class="products-section shadow-box">
+          <div class="scrollable-content">
+            @for (item of cat.rations; track item.id) {
+              <div class="product-card">
+                <div class="product-details">
+                  <h4>Продукт:</h4>
+                  <p class="brand">
+                    {{ item.product.brand }} 
+                    <span style="color: #444; font-weight: 600;">({{ item.product.product_name }})</span> 
+                    <span class="arrow-down">▼</span>
+                  </p>
+                  <div class="macros">
+                    <p>Протеїн: <span>{{ item.product.protein_pct }}%</span></p>
+                    <p>Жири: <span>{{ item.product.fat_pct }}%</span></p>
+                    <p>Клітковина: <span>{{ item.product.fiber_pct }}%</span></p>
+                  </div>
+                </div>
+                <div class="product-visual">
+                  <img src="assets/images/cat-food.png" alt="корм" />
+                  <span class="portion">{{ item.daily_portion_g }} г/день</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <button class="generate-btn shadow-box" (click)="openRationModal()">
+          ✨ Згенерувати ідеальний раціон для {{ cat.name }}
+        </button>
+
+      </div>
+    </div>
+  }
+</div>
+
+@if (showRationModal) {
+  <div class="modal-overlay" (click)="closeRationModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closeRationModal()">×</button>
+      
+      <h3 class="modal-title">✨ Персональний раціон</h3>
+      
+      @if (isGeneratingRation) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>ШІ аналізує породу, вагу та вік... Підбираємо найкращі корми!</p>
+        </div>
+      } @else {
+        <div class="ration-result">
+          <p style="white-space: pre-wrap; line-height: 1.6;">{{ generatedRation }}</p>
+        </div>
+      }
+    </div>
+  </div>
+}

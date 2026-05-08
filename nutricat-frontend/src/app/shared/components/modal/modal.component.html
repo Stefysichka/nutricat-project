@@ -1,0 +1,19 @@
+@if(isOpen){
+    <div class = "modal-overlay" (click) = "onClose()">
+        <div class = "modal-container" (click) = "$event.stopPropagation()"></div>
+        <img src = "../../../../assets/images/black-cat.svg" alt = "cat" class = "cat-deco">
+        <h2 class = "modal-title">{{title}}</h2>
+        <div class = "modal-actions">
+            <app-custom-button
+                [label] = "cancelText"
+                variant = "dark"
+                (onClick) = "onClose()">
+            </app-custom-button>
+            <app-custom-button
+                [label] = "confirmText"
+                variant = "primary"
+                (onClick) = "onConfirm()">
+            </app-custom-button>
+        </div>
+    </div>
+}
