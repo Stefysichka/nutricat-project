@@ -38,8 +38,9 @@
         @if (isEditMode) {
           <app-custom-button 
             label="Зберегти" 
-            (onClick)="forceSave()"
-            style="background-color: #4CAF50;"> </app-custom-button>
+            variant="primary"
+            (onClick)="forceSave()">
+          </app-custom-button>
         }
       </div>
     } @else {
