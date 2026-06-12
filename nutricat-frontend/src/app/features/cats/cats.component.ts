@@ -33,7 +33,7 @@ export class CatsComponent implements OnInit {
     if (!birthDateString) return 'Невідомо';
     const birthDate = new Date(birthDateString);
     const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear() -1;
+    let age = today.getFullYear() - birthDate.getFullYear() -3;
     const m = today.getMonth() - birthDate.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
       age--;
