@@ -1,9 +1,6 @@
 import os
-
 import json
-
 from openai import OpenAI
-
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv(), override=True)
@@ -11,6 +8,12 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 SYSTEM_PROMPT = """Ти — професійний, дружній ветеринарний дієтолог додатку NutriCat. Ти працюєш у двох режимах: створення нової анкети та редагування існуючої.
 Твоя мета — зібрати дані ЖИВОЮ МОВОЮ, глибоко проаналізувати їх, дати експертний фідбек у чаті, а потім МОВЧКИ зберегти розгорнуті поради в базу.
+
+=== КРИТИЧНА ВЕТЕРИНАРНА ЦЕНЗУРА ===
+Ти — ЛІКАР. Ретельно аналізуй те, що каже користувач, і реагуй адекватно:
+1. РЕАКЦІЯ НА КРИТИЧНІ ДАНІ: Якщо користувач просто констатує факт (наприклад, "важить 20 кг"), НЕ кажи "я не згоден". Замість цього бий на сполох: "Вага 20 кг для цієї породи — це критичне ожиріння, що серйозно загрожує життю! Нам потрібно негайно братися за його раціон." і продовжуй збір даних.
+2. ЖОРСТКА ВІДМОВА НА ШКІДЛИВУ МЕТУ: ТІЛЬКИ ЯКЩО користувач пропонує абсурдну мету (наприклад, "набрати вагу" для кота з ожирінням) або відверто шкодить (годує по 1.5 кг на день) — КАТЕГОРИЧНО ВІДМОВЛЯЙСЯ! Тоді пиши: "Як ветеринар, я категорично не можу з цим погодитися. Це загрожує життю кота. Наша єдина можлива мета — це безпечне схуднення. Чи готові ви змінити підхід?"
+3. СУВОРА ЗАБОРОНА: НЕ ВИКЛИКАЙ функцію 'save_analyzed_cat_data', поки користувач не погодиться на адекватну, БЕЗПЕЧНУ медичну мету.
 
 АЛГОРИТМ РОБОТИ (ВИКОНУЙ СУВОРО ПО КРОКАХ):
 
@@ -29,9 +32,11 @@ SYSTEM_PROMPT = """Ти — професійний, дружній ветери�
 - В цьому ж повідомленні запитай: "Чи є скарги на самопочуття (млявість, блювота тощо)?"
 
 КРОК 3. УЗГОДЖЕННЯ МЕТИ ТА ЗБЕРЕЖЕННЯ (НАЙВАЖЛИВІШЕ)
-- ТІЛЬКИ КОЛИ користувач написав, що ЗГОДЕН з твоєю метою (або вніс свої безпечні корективи) та/або описав скарги — ТИ ПЕРЕХОДИШ У РЕЖИМ МОВЧАННЯ.
-- СУВОРО ЗАБОРОНЕНО писати поради чи діагнози текстом у чат, якщо мета вже узгоджена!
-- ТИ ПОВИНЕН МИТТЄВО ВИКЛИКАТИ ФУНКЦІЮ 'save_analyzed_cat_data'.
+- ЯК ТІЛЬКИ користувач погодився на БЕЗПЕЧНУ мету (наприклад, написав "так") та дав інформацію про скарги:
+- 🛑 СТОП ЧАТ! ТИ ПЕРЕХОДИШ У РЕЖИМ МОВЧАННЯ.
+- 🛑 СУВОРО ЗАБОРОНЕНО генерувати будь-яку текстову відповідь! Ніяких "Дякую", ніяких прощань чи порад у чаті!
+- 🛠️ ЄДИНА ДОЗВОЛЕНА ДІЯ: МОВЧКИ ВИКЛИКАТИ ФУНКЦІЮ `save_analyzed_cat_data`.
+- Всю свою експертну думку, діагнози, детальні поради та тригер [NEED_VET] ти генеруєш ВИКЛЮЧНО як значення параметра `tips` ВСЕРЕДИНІ ФУНКЦІЇ. У сам чат ти не відправляєш ЖОДНОГО слова.
 ЯК ЗАПОВНЮВАТИ ФУНКЦІЮ 'save_analyzed_cat_data':
 - diet: ТИ ПОВИНЕН дізнатися розмір порції (грами) та час годування. АЛЕ НІКОЛИ не питай про макронутриєнти — розраховуй їх сам!
 - tips: Сюди пиши ВЕЛИЧЕЗНИЙ, РОЗГОРНУТИЙ текст (мінімум 5-6 речень). Ти — лікар! Дай конкретні поради: як змінити грамівку корму, які вітаміни додати, як стимулювати активність кота вдома. Використовуй точну, серйозну ветеринарну термінологію (заборонено вигадувати безглузді слова чи русизми!).
@@ -41,186 +46,149 @@ SYSTEM_PROMPT = """Ти — професійний, дружній ветери�
 """
 
 tools = [
-
     {
-
         "type": "function",
-
         "function": {
-
             "name": "save_analyzed_cat_data",
-
             "description": "Зберігає дані про кота та його раціон (один або кілька кормів)",
-
             "parameters": {
-
                 "type": "object",
-
                 "properties": {
-
                     "cat": {
-
                         "type": "object",
-
                         "properties": {
-
                             "name": {"type": "string"},
-
                             "breed": {"type": "string"},
-
                             "gender": {"type": "string"},
-
                             "birth_date": {"type": "string", "description": "Формат YYYY-MM-DD"},
-
                             "weight_kg": {"type": "number"},
-
                             "body_condition": {"type": "string"},
-
                             "activity_level": {"type": "string"},
-
                             "is_neutered": {"type": "boolean"},
-
                             "description": {"type": "string"},
-
                             "tips": {"type": "string", "description": "Розгорнуті харчові поради та обов'язкове попередження про лікаря (якщо потрібно)"}
-
                         },
-
                         "required": ["name", "gender", "birth_date", "weight_kg", "body_condition", "activity_level", "is_neutered", "tips"]
-
                     },
-
                     "diet": {
-
                         "type": "array",
-
                         "description": "Список кормів. Якщо натуралка - кожен інгредієнт це окремий об'єкт у цьому масиві.",
-
                         "items": {
-
                             "type": "object",
-
                             "properties": {
-
                                 "brand": {"type": "string", "description": "Бренд або 'Натуральне харчування'"},
-
                                 "product_name": {"type": "string", "description": "Назва або конкретний інгредієнт (Куряче філе)"},
-
                                 "food_type": {"type": "string"},
-
                                 "calories_100g": {"type": "number"},
-
                                 "protein_pct": {"type": "number"},
-
                                 "fat_pct": {"type": "number"},
-
                                 "fiber_pct": {"type": "number"},
-
                                 "daily_portion_g": {"type": "integer"},
-
                                 "feeding_time": {"type": "string"}
-
                             },
-
                             "required": ["brand", "product_name", "food_type", "protein_pct", "fat_pct", "fiber_pct", "daily_portion_g", "feeding_time"]
-
                         }
-
                     }
-
                 },
-
                 "required": ["cat", "diet"]
-
             }
-
         }
-
     }
-
 ]
 
+def get_food_norms_context():
+    from .models import DietaryNorm 
+    try:
+        norms = DietaryNorm.objects.all() 
+        if norms.exists():
+            norms_list = [f"{n.factor_name}: {n.multiplier_value}" for n in norms]
+            norms_text = ", ".join(norms_list)
+            return f"\n\nСУВОРІ ВЕТЕРИНАРНІ КОЕФІЦІЄНТИ ДЛЯ РОЗРАХУНКІВ (з бази даних):\n{norms_text}\nВикористовуй їх для точного розрахунку макронутриєнтів та калорій!"
+    except Exception:
+        pass
+        
+    return "\n\nСУВОРІ ВЕТЕРИНАРНІ КОЕФІЦІЄНТИ ДЛЯ РОЗРАХУНКІВ:\nКастрований: 1.2, Не кастрований: 1.4, Низька активність: 1.0, Висока активність: 1.6\nВикористовуй їх для точного розрахунку!"
 def generate_ration_with_ai(cat):
-    """Генерує ідеальний раціон для конкретного кота за допомогою OpenAI"""
+    db_norms_context = get_food_norms_context()
     
     prompt = f"""Ти — провідний ветеринарний дієтолог. Твоє завдання — згенерувати ідеальний, конкретний раціон для кота.
     Ось дані пацієнта:
-    - Ім'я: {cat.name}
-    - Порода: {cat.breed or 'Невідомо'}
-    - Вік: {cat.birth_date} 
-    - Вага: {cat.weight_kg} кг
-    - Стерилізація: {'Так' if cat.is_neutered else 'Ні'}
-    - Активність: {cat.activity_level}
+    Ім'я: {cat.name}
+    Порода: {cat.breed or 'Невідомо'}
+    Вік: {cat.birth_date} 
+    Вага: {cat.weight_kg} кг
+    Стерилізація: {'Так' if cat.is_neutered else 'Ні'}
+    Активність: {cat.activity_level}
     
-    Твоє завдання:
-    1. Порекомендуй 2-3 конкретні варіанти якісних кормів (назви реальні преміум/супер-преміум бренди, що підходять під його породу та параметри).
-    2. Вкажи точну грамівку на день і розбий її на прийоми їжі (наприклад: "60г на день: 30г вранці та 30г ввечері").
-    3. Додай 1-2 речення про те, чому саме такий раціон ідеальний для нього.
-    4. Оформлюй текст красиво, використовуючи марковані списки (тире або зірочки). Спілкуйся виключно грамотною українською мовою.
+    {db_norms_context}
+    
+    Твоє завдання (ВИКОНУЙ СУВОРО ПО КРОКАХ):
+    1. Твоє завдання (ВИКОНУЙ СУВОРО ПО КРОКАХ):
+    1. РОЗРАХУНОК: Спочатку обов'язково покажи математичний розрахунок енергетичної потреби текстом.
+       - Напиши формулу та результат RER: 70 * (вага в кг ^ 0.75).
+       - Проаналізуй дані кота та ОБЕРИ ЄДИНИЙ правильний коефіцієнт з бази даних. Якщо факторів кілька (наприклад, стерилізований + висока активність), обери найбільш пріоритетний для здоров'я кота.
+       - Напиши обраний коефіцієнт окремим реченням: "Обраний коефіцієнт: X".
+       - Розрахуй MER: результат RER помножити на обраний коефіцієнт. СУВОРО ПЕРЕВІР, щоб число у тексті збігалося з числом у формулі!
+    2. РЕКОМЕНДАЦІЯ КОРМІВ: Порекомендуй 2-3 конкретні варіанти якісних кормів (реальні преміум/супер-преміум бренди).
+    3. ПОРЦІЯ: Вкажи точну грамівку на день і розбий її на прийоми їжі.
+    4. ОБҐРУНТУВАННЯ ВИБОРУ: Детально поясни, ЧОМУ саме ці корми ти рекомендуєш. Пов'яжи їхній склад із породою кота, його вагою, статусом стерилізації та віком. Поясни, як саме ці корми задовольнять його енергетичні потреби (MER).
+    
+    === СУВОРІ ПРАВИЛА ФОРМАТУВАННЯ ===
+    Текст має бути АБСОЛЮТНО чистим, без жодного Markdown форматування. 
+    КАТЕГОРИЧНО ЗАБОРОНЕНО використовувати:
+    - Зірочки (*)
+    - Решітки (#)
+    - Рисочки (-) або крапки для списків
+    - Жирний шрифт чи курсив
+    Використовуй лише звичайні текстові абзаци, відступи (Enter) та звичайні цифри (1., 2.) для переліку. Спілкуйся виключно грамотною українською мовою.
     """
     
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "Ти експерт з котячого харчування."},
+                {"role": "system", "content": "Ти експерт з котячого харчування. Видаєш відповіді виключно чистим текстом."},
                 {"role": "user", "content": prompt}
-            ]
+            ],
+            temperature=0.2 
         )
         return response.choices[0].message.content
-    except Exception as e:
-        print(f"!!! ПОМИЛКА ГЕНЕРАЦІЇ РАЦІОНУ !!! -> {str(e)}")
+    except Exception:
         return "Вибачте, виникла помилка під час генерації раціону. Спробуйте пізніше."
     
-
 def process_chat_message(messages_history, cat_id=None, user=None):
-
     if not messages_history:
-
         return {"status": "error", "reply": "Порожня історія."}
 
-    openai_history = [{"role": "system", "content": SYSTEM_PROMPT}]
+    db_norms_context = get_food_norms_context()
+    dynamic_system_prompt = SYSTEM_PROMPT + db_norms_context
+
+    openai_history = [{"role": "system", "content": dynamic_system_prompt}]
     for msg in messages_history:
-
         role = msg.get("role")
-
         content = msg.get("content")
-
-        if role == "system": continue
+        if role == "system": 
+            continue
         openai_history.append({"role": role, "content": content})
 
     if cat_id and user:
-
         from .models import Cat 
-
         try:
-
             cat = Cat.objects.get(id=cat_id, owner=user)
             old_rations = cat.rations.all()
 
             if old_rations.exists():
-
                 diet_details = []
-
                 for r in old_rations:
                     diet_details.append(
-
                         f"Бренд: {r.product.brand}, Назва: {r.product.product_name}, "
-
                         f"Тип: {r.product.food_type}, Порція: {r.daily_portion_g}г, "
-
                         f"Час: {r.feeding_time}, Білок: {r.product.protein_pct}%, "
-
                         f"Жир: {r.product.fat_pct}%, Клітковина: {r.product.fiber_pct}%, "
-
                         f"Калорії: {r.product.calories_100g}"
-
                     )
-
                 diet_info = " | ".join(diet_details)
-
             else:
-
                 diet_info = "Кормів не додано"
             context = f"""УВАГА: Це режим РЕДАГУВАННЯ анкети кота '{cat.name}'. 
             ВЖЕ ВІДОМІ ДАНІ (СУВОРО ЗАБОРОНЕНО питати їх знову!):
@@ -237,53 +205,35 @@ def process_chat_message(messages_history, cat_id=None, user=None):
             3. Якщо з'явилася скарга (наприклад, "млявий"), проаналізуй її на основі породи та ваги.
             4. ВИКЛИК ФУНКЦІЇ: МОВЧКИ викликай 'save_analyzed_cat_data'. У поле 'tips' напиши ДЕТАЛЬНУ, ВЕЛИКУ пораду ВІД СЕБЕ (що робити з харчуванням, як гратися). Ніколи не пиши короткі відписки! Якщо є скарга — обов'язково порадь клініку і додай [NEED_VET] в самий кінець."""
             openai_history.insert(-1, {"role": "system", "content": context})
-
-        except Exception as e:
-
-            print(f"Помилка завантаження кота для контексту: {e}")
+        except Exception:
+            pass
 
     try:
         response = client.chat.completions.create(
-
             model="gpt-4o-mini",
-
             messages=openai_history,
-
             tools=tools,
-
             tool_choice="auto" 
-
         )
         response_message = response.choices[0].message
+        
         if getattr(response_message, "refusal", None):
-
             return {
-
                 "status": "chatting", 
-
                 "reply": "Ця дія заблокована алгоритмами безпеки. Ймовірно, обрана мета є вкрай небезпечною для здоров'я тварини. Будь ласка, оберіть безпечний підхід (наприклад, схуднення).", 
-
                 "role": "assistant"
-
             }
+            
         if response_message.tool_calls:
-
             for tool_call in response_message.tool_calls:
-
                 if tool_call.function.name == "save_analyzed_cat_data":
-
                     try:
                         parsed_data = json.loads(tool_call.function.arguments)
-
                         return {"status": "completed", "data": parsed_data}
-
                     except json.JSONDecodeError:
-
                         return {"status": "chatting", "reply": "Виникла помилка під час обробки даних. Спробуйте перефразувати.", "role": "assistant"}
+                        
         reply_text = response_message.content if response_message.content else "Вибачте, виникла помилка під час формування відповіді. Спробуйте ще раз."
         return {"status": "chatting", "reply": reply_text, "role": "assistant"}
     except Exception as e:
-
-        print(f"!!! ПОМИЛКА OPENAI API !!! -> {str(e)}")
-
         return {"status": "chatting", "reply": f"Системна помилка: {str(e)[:150]}", "role": "assistant"}
